@@ -11,24 +11,15 @@
  */
 class Solution {
 public:
+    int sum = 0;
+    void cntnodes(TreeNode* root){
+        if(!root) return;
+        sum++;
+        cntnodes(root->left);
+        cntnodes(root->right);
+    }
     int countNodes(TreeNode* root) {
-        int cnt = 0, size;
-        queue<TreeNode*>q;
-        TreeNode* p;
-        if(!root) return cnt;
-
-        q.push(root);
-        while(!q.empty()){
-            size = q.size();
-            for(int i = 0;i<size;i++){
-                p = q.front();
-                q.pop();
-                cnt++;
-                if(p->left) q.push(p->left);
-                if(p->right) q.push(p->right);
-            }
-        }
-
-        return cnt;
+        cntnodes(root);
+        return sum;
     }
 };
