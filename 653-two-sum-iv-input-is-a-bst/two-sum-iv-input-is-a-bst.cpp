@@ -11,17 +11,11 @@
  */
 class Solution {
 public:
-    bool inorder(TreeNode* root, int k, map<int, int>&mp){
+    map<int, int>mp;
+    bool findTarget(TreeNode* root, int k) {
         if(root == NULL) return false;
-        bool l = inorder(root->left, k, mp);
         if(mp.find(k - root->val) != mp.end()) return true;
         mp[root->val] = 1;
-        bool r = inorder(root->right, k, mp);
-        return l || r;
-    }
-    bool findTarget(TreeNode* root, int k) {
-        map<int, int>mp;
-        if(root == NULL) return false;
-        return inorder(root, k, mp);
+        return findTarget(root->left, k) || findTarget(root->right, k);
     }
 };
