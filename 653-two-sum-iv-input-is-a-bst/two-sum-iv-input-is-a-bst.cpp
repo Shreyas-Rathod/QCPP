@@ -1,21 +1,57 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
+class BSTIterator {
+    std::stack<TreeNode*> st;
+    bool reverse;  // true means reverse in-order
+public:
+    BSTIterator(TreeNode* root, bool isReverse) : reverse(isReverse) {
+        pushAll(root);
+    }
+
+    bool hasNext() {
+        return !st.empty();
+    }
+
+    int next() {
+        TreeNode* temp = st.top();
+        st.pop();
+        if (!reverse) {
+            pushAll(temp->right);
+        } else {
+            pushAll(temp->left);
+        }
+        return temp->val;
+    }
+
+private:
+    void pushAll(TreeNode* node) {
+        while (node != nullptr) {
+            st.push(node);
+            node = reverse ? node->right : node->left;
+        }
+    }
+};
+
 class Solution {
 public:
-    map<int, int>mp;
     bool findTarget(TreeNode* root, int k) {
-        if(root == NULL) return false;
-        if(mp.find(k - root->val) != mp.end()) return true;
-        mp[root->val] = 1;
-        return findTarget(root->left, k) || findTarget(root->right, k);
+        if (!root) return false;
+
+        BSTIterator leftIter(root, false);
+        BSTIterator rightIter(root, true);
+
+        int i = leftIter.next();
+        int j = rightIter.next();
+
+        while (i < j) {
+            int sum = i + j;
+            if (sum == k) return true;
+            else if (sum < k) {
+                if (leftIter.hasNext()) i = leftIter.next();
+                else break;
+            } else {
+                if (rightIter.hasNext()) j = rightIter.next();
+                else break;
+            }
+        }
+        return false;
     }
 };
