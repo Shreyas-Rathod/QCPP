@@ -8,16 +8,15 @@ public:
         for(int i = 0;i<m;i++){
             adj[times[i][0]-1].push_back({times[i][1]-1, times[i][2]});
         }
-        queue<pair<int, int>>pq;
-        pq.push({k-1, 0});
+        set<pair<int, int>>pq;
+        pq.insert({0, k-1});
         while(!pq.empty()){
-            int u = pq.front().first;
-            int wt = pq.front().second;
-            pq.pop();
+            auto [wt, u] = *pq.begin();
+            pq.erase(pq.begin());
             for(auto &it : adj[u]){
                 if(dis[it.first] > wt + it.second){
                     dis[it.first] = wt + it.second;
-                    pq.push({it.first, dis[it.first]});
+                    pq.insert({dis[it.first], it.first});
                 }
             }
         }
