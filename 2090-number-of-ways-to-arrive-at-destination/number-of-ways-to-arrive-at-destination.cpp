@@ -1,33 +1,51 @@
 class Solution {
 public:
     int countPaths(int n, vector<vector<int>>& roads) {
-        int mod = 1e9+7;
-        vector<vector<pair<int, long long>>>adj(n);
-        int m = roads.size();
-        for(int i = 0;i<m;i++){
-            adj[roads[i][0]].push_back({roads[i][1], roads[i][2]});
-            adj[roads[i][1]].push_back({roads[i][0], roads[i][2]});
+        const int MOD = 1e9+7;
+        // build adjacency list
+        vector<vector<pair<int,int>>> adj(n);
+        for (auto &r : roads) {
+            int u = r[0], v = r[1], w = r[2];
+            adj[u].emplace_back(v, w);
+            adj[v].emplace_back(u, w);
         }
-        vector<long long> dist(n, LLONG_MAX);
-        vector<int>ways(n, 0);
-        ways[0] = 1;
-        dist[0] = 0;
-        set<pair<long long, int>>pq;
-        pq.insert({dist[0], 0});
 
-        while(!pq.empty()){
-            auto [wt, u] = *pq.begin();
-            pq.erase(pq.begin());
-            if(u == n-1) break;
-            if(wt > dist[u]) continue;
-            for(auto &it : adj[u]){
-                if(dist[it.first] > wt + it.second){
-                    dist[it.first] = wt + it.second;
-                    ways[it.first] = ways[u];
-                    pq.insert({dist[it.first], it.first});
+        // dist[] may exceed INT_MAX, so use long long and initialize to LLONG_MAX
+        vector<long long> dist(n, LLONG_MAX);
+        vector<int> ways(n, 0);
+
+        dist[0] = 0;
+        ways[0] = 1;
+
+        // min-heap of (current_distance, node)
+        priority_queue<
+            pair<long long,int>,
+            vector<pair<long long,int>>,
+            greater<pair<long long,int>>
+        > pq;
+
+        pq.push({0LL, 0});
+
+        while (!pq.empty()) {
+            auto [d, u] = pq.top();
+            pq.pop();
+            if (d > dist[u]) 
+                continue;    // stale entry
+
+            for (auto &edge : adj[u]) {
+                int v = edge.first;
+                long long w = edge.second;
+                long long nd = d + w;
+
+                // found a strictly shorter path to v
+                if (nd < dist[v]) {
+                    dist[v] = nd;
+                    ways[v] = ways[u];
+                    pq.push({nd, v});
                 }
-                else if(dist[it.first] == wt + it.second){
-                    ways[it.first] = (ways[u] + ways[it.first])%mod;
+                // found an additional shortest path of the same length
+                else if (nd == dist[v]) {
+                    ways[v] = (ways[v] + ways[u]) % MOD;
                 }
             }
         }
