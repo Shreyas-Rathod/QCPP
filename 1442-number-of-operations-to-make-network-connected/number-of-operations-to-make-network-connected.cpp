@@ -34,16 +34,16 @@ class Disjoint{
 class Solution {
 public:
     int makeConnected(int n, vector<vector<int>>& connections) {
-        int E = connections.size();
+        int E = connections.size(), res = n;
         if(E < n-1) return -1;
         Disjoint ds(n);
         for(int i = 0;i<E;i++){
-            ds.unionbySize(connections[i][0], connections[i][1]);
+            if(ds.find(connections[i][0]) != ds.find(connections[i][1])){
+                res--;
+                ds.unionbySize(connections[i][0], connections[i][1]);
+            }    
         }
-        set<int>st;
-        for(int i = 0;i<n;i++){
-            st.insert(ds.find(i));
-        }
-        return st.size()-1;
+        return --res;
+        
     }
 };
