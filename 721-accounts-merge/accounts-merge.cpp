@@ -63,11 +63,6 @@ public:
             res.push_back(move(merged));
         }
         
-        // 4) (Optional) sort by account name
-        sort(res.begin(), res.end(), [](auto &a, auto &b){
-            return a[0] < b[0];
-        });
-        
         return res;
     }
 };
