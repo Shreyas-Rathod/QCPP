@@ -1,18 +1,22 @@
 class Solution {
 public:
-    int rob(vector<int>& nums) {
-        int n = nums.size();
-        if(n == 1) return nums[0];
-        int res0 = nums[0];
-        int res1 = max(nums[1], res0);
+    int cob(vector<int>& nums, int st, int end){
+        int n = end - st + 1;
+        if(n == 1) return nums[st];
+        int res0 = nums[st];
+        int res1 = max(nums[st+1], res0);
         int newn = 0;
 
-        for(int i = 2;i<n;i++){
+        for(int i = st + 2;i<=end;i++){
             newn = max(res1, nums[i] + res0);
             res0 = res1;
             res1 = newn;
         }
-        
+
         return max(res0, res1);
+    }
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        return cob(nums, 0, n-1);
     }
 };
