@@ -50,25 +50,24 @@ public:
         int n = coins.size();
         if(!T) return 0;
 
-        vector<vector<int>>dp(n, vector<int>(T+1, 0));
+        vector<int>prev(T+1, 0), curr(T+1, 0);
 
         for (int i = 0; i <= T; i++) {
-            if (i % coins[0] == 0)
-                dp[0][i] = i / coins[0];
-            else
-                dp[0][i] = 1e9; 
+            prev[i] = (i%coins[0] == 0) ? i / coins[0] : 1e9;
         }
 
         for(int i = 1;i<n;i++){
+            fill(curr.begin(), curr.end(), 0); 
             for(int k = 0;k<=T;k++){
-                int ntaken = dp[i-1][k];
+                int ntaken = prev[k];
                 int taken = 1e9;
-                if(coins[i] <= k) taken = 1 + dp[i][k-coins[i]];
-                dp[i][k] = min(ntaken, taken);
+                if(coins[i] <= k) taken = 1 + curr[k-coins[i]];
+                curr[k] = min(ntaken, taken);
             }
+            prev = curr;
         }
 
-        if(dp[n-1][T] >= 1e9) return -1;
-        return dp[n-1][T];
+        if(prev[T] >= 1e9) return -1;
+        return prev[T];
     }
 };
