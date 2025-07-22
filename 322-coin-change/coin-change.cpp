@@ -19,7 +19,7 @@ public:
         }
         return cnt == INT_MAX ? -1 : cnt;
     }
-*/  
+//memoization   
     int fun(int index, int T, vector<vector<int>>&dp, vector<int>&coins){
         
         if(index == 0){
@@ -44,5 +44,31 @@ public:
 
         int cnt = fun(n-1, V, dp, coins);
         return cnt == 1e9+7 ? -1 : cnt;
+    }
+*/
+    int coinChange(vector<int>&coins, int T){
+        int n = coins.size();
+        if(!T) return 0;
+
+        vector<vector<int>>dp(n, vector<int>(T+1, 0));
+
+        for (int i = 0; i <= T; i++) {
+            if (i % coins[0] == 0)
+                dp[0][i] = i / coins[0];
+            else
+                dp[0][i] = 1e9; 
+        }
+
+        for(int i = 1;i<n;i++){
+            for(int k = 0;k<=T;k++){
+                int ntaken = dp[i-1][k];
+                int taken = 1e9;
+                if(coins[i] <= k) taken = 1 + dp[i][k-coins[i]];
+                dp[i][k] = min(ntaken, taken);
+            }
+        }
+
+        if(dp[n-1][T] >= 1e9) return -1;
+        return dp[n-1][T];
     }
 };
