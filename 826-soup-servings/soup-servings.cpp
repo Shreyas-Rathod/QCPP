@@ -19,8 +19,12 @@ public:
 
     }
     double soupServings(int n) {
-        if(n >= 25100) return 1.0;
+        if(n >= 4800) return 1.0;
         vector<vector<double>>dp(n+1, vector<double>(n+1, -1));
+
+        for(int a = 0;a<=100;a++){
+
+        }
 
         return fun(dp, n, n);
 
