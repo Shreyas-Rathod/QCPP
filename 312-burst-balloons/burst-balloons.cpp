@@ -16,8 +16,21 @@ public:
         int n = nums.size();
         nums.push_back(1);
         nums.insert(nums.begin(), 1);
-        vector<vector<int>>dp(n+2, vector<int>(n+2, -1));
+        vector<vector<int>>dp(n+2, vector<int>(n+2, 0));
 
-        return fun(1, n, nums, dp);
+        // return fun(1, n, nums, dp);
+        for(int i = n;i>=1;i--){
+            for(int j = i;j<=n;j++){
+                int maxi = INT_MIN, ans;
+                for(int x = i;x<=j;x++){
+                    ans = nums[i-1]*nums[x]*nums[j+1] + dp[i][x-1] + dp[x+1][j];
+                    maxi = max(ans, maxi);
+                }
+                dp[i][j] = maxi;
+            }
+        }
+
+        return dp[1][n];
+
     }
 };
