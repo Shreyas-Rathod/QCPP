@@ -2,35 +2,26 @@ class Solution {
 public:
     int beautySum(string s) {
         int n = s.size();
-        int maxi = INT_MIN, mini = INT_MAX, count = 0, k;
-        vector<int>mp(26, 0);
+        long long total = 0;  // result can get big
 
-        auto minfun = [&](){
-            k = INT_MAX;
-            for(int it : mp){
-                if(it <= k && it > 0) k = it;
-            }
-            return k;
-        };
+        for (int i = 0; i < n; i++) {
+            vector<int> freq(26, 0);   // reset for each start i
+            int maxi = 0;              // track max incrementally
 
-        auto maxfun = [&](){
-            k = INT_MIN;
-            for(int it : mp){
-                if(it >= k) k = it;
-            }
-            return k;
-        };
+            for (int j = i; j < n; j++) {
+                int idx = s[j] - 'a';
+                freq[idx]++;
+                maxi = max(maxi, freq[idx]);
 
-        for(int i = 0;i<n;i++){
-            for(int j = i;j<n;j++){
-                mp[s[j] - 'a']++;
-                maxi = maxfun();
-                mini = minfun();
-                count += (maxi - mini);
+                int mini = INT_MAX;
+                for (int c = 0; c < 26; c++) {
+                    if (freq[c] > 0) mini = min(mini, freq[c]);  // only positive counts
+                }
+
+                total += (maxi - mini);
             }
-            fill(mp.begin(), mp.end(), 0);
         }
 
-        return count;
+        return (int)total;
     }
 };
