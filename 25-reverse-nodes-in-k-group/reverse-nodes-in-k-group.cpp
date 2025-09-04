@@ -10,47 +10,37 @@
  */
 class Solution {
 public:
-    ListNode* reverse(ListNode* head){
-        if(head->next == NULL || head == NULL) return head;
-        ListNode* n = reverse(head->next);
+    ListNode* rev(ListNode *head){
+        if(head == NULL || head->next == NULL) return head;
+        ListNode *n = rev(head->next);
         head->next->next = head;
         head->next = NULL;
         return n;
     }
-
-    ListNode* findkth(ListNode* temp, int k){
-        k--; 
-
-    // Decrement K until it reaches
-    // the desired position
-        while(temp != NULL && k > 0){
-        // Decrement k as temp progresses
-            k--; 
-        
-        // Move to the next node
-        temp = temp -> next; 
+    ListNode* findnext(ListNode *head, int k){
+        while(head != NULL && k-- > 0) head = head->next;
+        return head;
     }
-    
-    // Return the Kth node
-    return temp; 
-    }
-
     ListNode* reverseKGroup(ListNode* head, int k) {
-        ListNode* temp = head, *nextn = head, *pren = NULL, *kthn = head;
+        ListNode *temp = head, *nexthead = NULL, *prev, *kthnode;
         while(temp){
-            kthn = findkth(temp, k);
-            if(kthn == NULL){
-                if(pren) pren->next = temp;
+            kthnode = findnext(temp, k-1);
+            if(kthnode == NULL){
+                if(prev) prev->next = temp;
                 break;
             }
-            nextn = kthn->next;
-            kthn->next = NULL;
-            kthn = reverse(temp);
-            if(temp == head) head = kthn;
-            else pren->next = kthn;
+            
+            nexthead = kthnode->next;
+            kthnode->next = NULL;
+            rev(temp);
 
-            pren = temp;
-            temp = nextn;
+            if(temp == head) head = kthnode;
+            else{
+                prev->next = kthnode;
+            }
+
+            prev = temp;
+            temp = nexthead;
         }
         return head;
     }
