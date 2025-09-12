@@ -4,13 +4,12 @@ public:
         int n = arr.size(), mod = 1e9 + 7;
         long left, right, count = 0;
         stack<int>st;
-        vector<int>pre(n, 0);
-        vector<int>nxt(n, 0);
+        vector<int>pre(n, -1);
+        vector<int>nxt(n, n);
 
         for(int i = n-1;i>=0;i--){
             while(!st.empty() && arr[i] <= arr[st.top()]) st.pop();
             if(!st.empty()) nxt[i] = st.top();
-            else nxt[i] = n;
             st.push(i); 
         }
 
@@ -19,7 +18,6 @@ public:
         for(int i = 0;i<n;i++){
             while(!st.empty() && arr[i] < arr[st.top()]) st.pop();
             if(!st.empty()) pre[i] = st.top();
-            else pre[i] = -1;
             st.push(i); 
         }
 
