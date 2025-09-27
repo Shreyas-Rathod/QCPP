@@ -1,34 +1,36 @@
 class Solution {
 public:
-    vector<int> findOrder(int numCourses, vector<vector<int>>& prerequisites) {
-        vector<vector<int>>adj(numCourses);
-        vector<int>inout(numCourses, 0);
+    vector<int> findOrder(int numCourses, vector<vector<int>>& prer) {
+        int n = prer.size(), u;
+
+        vector<vector<int>>mat(numCourses);
         vector<int>res;
+        vector<int>vis(numCourses, 0);
 
-        int n = prerequisites.size();
         for(int i = 0;i<n;i++){
-            adj[prerequisites[i][1]].push_back(prerequisites[i][0]);
-            inout[prerequisites[i][0]]++;
+            mat[prer[i][1]].push_back(prer[i][0]);
+            vis[prer[i][0]]++;
         }
-
+        
         queue<int>q;
-        for(int i = 0;i<inout.size();i++){
-            if(!inout[i]) q.push(i);
-        }
 
-        // bfs
+        for(int i = 0;i<numCourses;i++) if(vis[i]==0) q.push(i);
+
         int visited = 0;
+
         while(!q.empty()){
-            int u = q.front();
+            u = q.front();
             q.pop();
             res.push_back(u);
             visited++;
-            for(auto &it : adj[u]){
-                inout[it]--;
-                if(inout[it] == 0) q.push(it);
+            for(int &v : mat[u]){
+                vis[v]--;
+                if(vis[v] == 0) q.push(v);
             }
         }
+
         if(visited == numCourses) return res;
+
         return {};
     }
 };
