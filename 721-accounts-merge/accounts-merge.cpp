@@ -1,68 +1,63 @@
-class Disjoint {
-    vector<int> parent, rnk;
-public:
-    Disjoint(int n) : parent(n), rnk(n, 0) {
-        for (int i = 0; i < n; ++i)
-            parent[i] = i;
+class Disjoint{
+    vector<int>rank, parent;
+    public :
+    Disjoint(int n){
+        rank.resize(n+1, 0);
+        parent.resize(n+1);
+        for(int i = 0;i<=n;i++) parent[i] = i;
     }
-    
-    int findPar(int x) {
-        return parent[x] == x
-            ? x
-            : parent[x] = findPar(parent[x]);
+    int findp(int x){
+        if(x == parent[x]) return x;
+        return parent[x] = findp(parent[x]);
     }
-    
-    void unionByRank(int x, int y) {
-        int rx = findPar(x), ry = findPar(y);
-        if (rx == ry) return;
-        if (rnk[rx] > rnk[ry]) {
-            parent[ry] = rx;
-        } else if (rnk[rx] < rnk[ry]) {
-            parent[rx] = ry;
-        } else {
-            parent[ry] = rx;
-            rnk[rx]++;
+    void UnionByRank(int x, int y){
+        int xpar = findp(x);
+        int ypar = findp(y);
+        if(xpar == ypar) return;
+        if(rank[xpar] > rank[ypar]) parent[ypar] = xpar;
+        else if(rank[xpar] < rank[ypar]) parent[xpar] = ypar;
+        else{
+            parent[xpar] = ypar;
+            rank[ypar]++;
         }
     }
-};
 
+};
 class Solution {
 public:
     vector<vector<string>> accountsMerge(vector<vector<string>>& accounts) {
         int n = accounts.size();
         Disjoint ds(n);
-        unordered_map<string,int> owner;  // email → first account index seen
-        
-        // 1) Union accounts by the same email
-        for (int i = 0; i < n; ++i) {
-            for (int j = 1; j < accounts[i].size(); ++j) {
-                const string &em = accounts[i][j];
-                if (owner.count(em)) {
-                    ds.unionByRank(i, owner[em]);
-                } else {
-                    owner[em] = i;
+        unordered_map<string, int>mp;
+
+        for(int i = 0;i<n;i++){
+            for(int j = 1;j<accounts[i].size();j++){
+                if(mp.count(accounts[i][j])){
+                    ds.UnionByRank(i, mp[accounts[i][j]]);
+                }
+                else{
+                    mp[accounts[i][j]] = i;
                 }
             }
         }
-        
-        // 2) Gather emails under each root
-        unordered_map<int, vector<string>> groups;  
-        for (auto &p : owner) {
-            int root = ds.findPar(p.second);
-            groups[root].push_back(p.first);
+
+        unordered_map<int, vector<string>>group;
+
+        vector<vector<string>>res;
+
+        for(auto ele : mp){
+            group[ds.findp(ele.second)].push_back(ele.first);
         }
-        
-        // 3) Build the answer
-        vector<vector<string>> res;
-        for (auto &g : groups) {
-            auto &emails = g.second;
-            sort(emails.begin(), emails.end());
-            vector<string> merged;
-            merged.push_back(accounts[g.first][0]);        // account name
-            merged.insert(merged.end(), emails.begin(), emails.end());
-            res.push_back(move(merged));
+
+        for(auto i : group){
+            vector<string>temp;
+            temp.push_back(accounts[i.first][0]);
+            vector<string>temp1 = i.second;
+            sort(temp1.begin(), temp1.end());
+            temp.insert(temp.end(), temp1.begin(), temp1.end());
+            res.push_back(temp);
         }
-        
+
         return res;
     }
 };
