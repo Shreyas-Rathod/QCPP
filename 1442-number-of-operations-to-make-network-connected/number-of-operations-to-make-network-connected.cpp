@@ -1,49 +1,43 @@
 class Disjoint{
-    public :
-    vector<int>size, par;
+    vector<int>rank, parent;
+    public : 
     Disjoint(int n){
-        size.resize(n+1);
-        par.resize(n+1, 0);
-        for(int i = 0;i<n;i++){
-            par[i] = i;
-            size[i] = 1;
-        }
+        rank.resize(n+1, 0);
+        parent.resize(n+1);
+        for(int i = 0;i<=n;i++) parent[i] = i;
     }
 
-    int find(int x){
-        if(par[x] == x) return x;
-        return par[x] = find(par[x]); 
-    }
+    void UnionByRank(int x, int y){
+        int xpar = findparent(x);
+        int ypar = findparent(y);
+        if(xpar == ypar) return;
 
-    void unionbySize(int x, int z){
-        int xpar = find(x);
-        int zpar = find(z);
-
-        if(xpar == zpar) return;
-        if(size[xpar] > size[zpar]){
-            par[zpar] = xpar;
-            size[xpar] += size[zpar];
-        }
+        if(rank[xpar] < rank[ypar]) parent[xpar] = ypar;
+        else if(rank[xpar] > rank[ypar]) parent[ypar] = xpar;
         else{
-            par[xpar] = par[zpar];
-            size[zpar] += size[xpar];
+            parent[ypar] = xpar;
+            rank[xpar]++;
         }
+    }
+
+    int findparent(int x){
+        if(parent[x] == x) return x;
+        return parent[x] = findparent(parent[x]);
     }
 };
-
 class Solution {
 public:
     int makeConnected(int n, vector<vector<int>>& connections) {
-        int E = connections.size(), res = n;
-        if(E < n-1) return -1;
+        int m = connections.size(), cnt = n;
         Disjoint ds(n);
-        for(int i = 0;i<E;i++){
-            if(ds.find(connections[i][0]) != ds.find(connections[i][1])){
-                res--;
-                ds.unionbySize(connections[i][0], connections[i][1]);
-            }    
+        if(m < n-1) return -1;
+        for(int i = 0;i<m;i++){
+            if(ds.findparent(connections[i][0]) != ds.findparent(connections[i][1])){
+                cnt--;
+                ds.UnionByRank(connections[i][0], connections[i][1]);
+            }
         }
-        return --res;
-        
+
+        return --cnt;
     }
 };
