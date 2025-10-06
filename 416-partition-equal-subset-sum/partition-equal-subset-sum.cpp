@@ -8,19 +8,21 @@ public:
         if(target%2) return false;
         int tar = target/2;
 
-        vector<vector<bool>>dp(tar+1, vector<bool>(n, false));
-
-        for(int i = 0;i<n;i++) dp[0][i] = true;
-        if(nums[0] <= tar) dp[nums[0]][0] = true;
+        vector<bool>prev(tar+1, false), curr(tar+1, false);
+        prev[0] = true;
+        
+        for(int i = 0;i<n;i++) if(nums[0] <= tar) prev[nums[0]] = true;
 
         for(int i = 1;i<n;i++){
+            curr[0] = true;
             for(int sum = 1;sum<=tar;sum++){
-                bool nottaken = dp[sum][i-1], taken = false;
-                if(nums[i] <= sum) taken = dp[sum-nums[i]][i-1];
-                dp[sum][i] = nottaken || taken;
+                bool nottaken = prev[sum], taken = false;
+                if(nums[i] <= sum) taken = prev[sum-nums[i]];
+                curr[sum] = nottaken || taken;
             }
+            prev = curr;
         }
 
-        return dp[tar][n-1];
+        return prev[tar];
     }
 };
