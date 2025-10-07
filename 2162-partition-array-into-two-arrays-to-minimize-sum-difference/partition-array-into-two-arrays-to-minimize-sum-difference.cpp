@@ -67,13 +67,6 @@ public:
                     min_diff = min(min_diff, (int)abs(partition1_sum - partition2_sum));
                 }
 
-                // Also check the element just before it, as it might be closer.
-                if (it != s2_candidates.begin()) {
-                    int s2 = *(--it);
-                    long long partition1_sum = s1 + s2;
-                    long long partition2_sum = total_sum - partition1_sum;
-                    min_diff = min(min_diff, (int)abs(partition1_sum - partition2_sum));
-                }
             }
         }
 
