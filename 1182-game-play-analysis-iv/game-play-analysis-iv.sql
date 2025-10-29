@@ -9,4 +9,4 @@ join (
     group by player_id
 ) b
 on a.player_id = b.player_id
-where a.event_date = DATE_ADD(b.first_login, INTERVAL 1 DAY); 
+where a.event_date = b.first_login + INTERVAL 1 DAY; 
